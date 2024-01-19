@@ -5,6 +5,8 @@ type ToneConfig = {
   toneFrequency: number;
   lfoFrequency: number;
   lowpassFrequency: number;
+  lowpassQ: number;
+  lowpassDetune: number;
 };
 
 const playTone = (config: ToneConfig, envelope: Envelope) => {
@@ -20,6 +22,8 @@ const playTone = (config: ToneConfig, envelope: Envelope) => {
   const lowPass = new BiquadFilterNode(context, {
     type: 'lowpass',
     frequency: config.lowpassFrequency,
+    Q: config.lowpassQ,
+    detune: config.lowpassDetune,
   });
 
   // Create an LFO (Low-Frequency Oscillator) for modulation
@@ -28,7 +32,7 @@ const playTone = (config: ToneConfig, envelope: Envelope) => {
     frequency: config.lfoFrequency,
   });
 
-  const lfoGain = new GainNode(context, { gain: 50 });
+  const lfoGain = new GainNode(context, { gain: 150 });
 
   const { attack, decay, sustain, release } = envelope;
 
@@ -45,7 +49,6 @@ const playTone = (config: ToneConfig, envelope: Envelope) => {
     currentTime + attack + decay + sustain + release,
   );
 
-  // Connect the oscillator to the filter, then the filter to the envelope, and finally the envelope to the destination
   oscillator.connect(lowPass);
   lowPass.connect(envelopeGain);
   envelopeGain.connect(context.destination);
@@ -59,11 +62,8 @@ const playTone = (config: ToneConfig, envelope: Envelope) => {
   oscillator.start();
 
   // Stop the LFO and oscillator after a duration (adjust as needed)
-  console.log(currentTime, typeof envelope.attack);
   lfo.stop(currentTime + envelope.duration);
   oscillator.stop(currentTime + envelope.duration);
-
-  console.log(envelope.duration);
 };
 
 export { playTone };

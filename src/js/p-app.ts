@@ -20,6 +20,12 @@ export class App extends LitElement {
   @property({ type: String })
   lowpassFrequency = '800';
 
+  @property({ type: String })
+  lowpassQ = '10';
+
+  @property({ type: String })
+  lowpassDetune = '0';
+
   envelopeRef: Ref<EnvelopeElement> = createRef();
 
   protected render(): TemplateResult {
@@ -79,6 +85,38 @@ export class App extends LitElement {
               @change="${this.play}"
             />
           </p-field>
+
+          <p-field>
+            <label for="lowpass-q">Lowpass Q</label>
+            <input
+              id="lowpass-q"
+              type="range"
+              min="1"
+              max="20"
+              step="0.5"
+              .value="${this.lowpassQ}"
+              @input="${(e: InputEvent) =>
+                (this.lowpassQ = (e.target as HTMLInputElement).value)}"
+              @change="${this.play}"
+            />
+            ${this.lowpassQ}
+          </p-field>
+
+          <p-field>
+            <label for="lowpass-detune">Lowpass Detune</label>
+            <input
+              id="lowpass-detune"
+              type="range"
+              min="1"
+              max="1000"
+              step="1"
+              .value="${this.lowpassDetune}"
+              @input="${(e: InputEvent) =>
+                (this.lowpassDetune = (e.target as HTMLInputElement).value)}"
+              @change="${this.play}"
+            />
+            ${this.lowpassDetune}
+          </p-field>
         </div>
 
         <div class="main">
@@ -97,6 +135,8 @@ export class App extends LitElement {
         lfoFrequency: Number(this.lfoFrequency),
         toneFrequency: Number(this.toneFrequency),
         lowpassFrequency: Number(this.lowpassFrequency),
+        lowpassQ: Number(this.lowpassQ),
+        lowpassDetune: Number(this.lowpassDetune),
       },
       {
         attack,
