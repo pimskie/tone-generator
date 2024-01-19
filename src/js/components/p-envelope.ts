@@ -1,5 +1,7 @@
 import { LitElement, html } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { customElement, state } from 'lit/decorators.js';
+
+import { SliderElement } from '@/components/form/p-slider';
 
 type Envelope = {
   attack: number;
@@ -13,90 +15,92 @@ export type { Envelope };
 
 @customElement('p-envelope')
 export class EnvelopeElement extends LitElement {
-  @property({ type: Number })
-  attack = 0;
-
-  @property({ type: Number })
-  decay = 0;
-
-  @property({ type: Number })
-  sustain = 0;
-
-  @property({ type: Number })
-  release = 0;
-
-  public get duration() {
-    return Number(
-      (this.attack + this.decay + this.sustain + this.release).toFixed(1),
-    );
-  }
+  @state()
+  value: Envelope = {
+    attack: 0.1,
+    decay: 0.1,
+    sustain: 0.1,
+    release: 0.2,
+    duration: 0.5,
+  };
 
   render() {
     return html`
       <div>
         <p-field>
-          <label for="attack">Attack</label>
-          <input
-            id="attack"
-            type="range"
+          <p-slider
+            id="envelope-attack"
+            name="attack"
+            .value="${this.value.attack}"
             min="0"
-            max="1"
+            max="3"
             step="0.1"
-            .value=${this.attack.toString()}
-            @input="${(e: InputEvent) =>
-              (this.attack = (e.target as HTMLInputElement).valueAsNumber)}"
-          />
-          ${this.attack}
+            @change="${this.onChange}"
+          >
+          </p-slider>
         </p-field>
 
         <p-field>
-          <label for="decay">decay</label>
-          <input
-            id="decay"
-            type="range"
+          <p-slider
+            id="envelope-decay"
+            name="decay"
+            .value="${this.value.decay}"
             min="0"
-            max="1"
+            max="3"
             step="0.1"
-            .value=${this.decay.toString()}
-            @input="${(e: InputEvent) =>
-              (this.decay = (e.target as HTMLInputElement).valueAsNumber)}"
-          />
-          ${this.decay}
+            @change="${this.onChange}"
+          >
+          </p-slider>
         </p-field>
 
         <p-field>
-          <label for="sustain">sustain</label>
-          <input
-            id="sustain"
-            type="range"
+          <p-slider
+            id="envelope-sustain"
+            name="sustain"
+            .value="${this.value.sustain}"
             min="0"
-            max="1"
+            max="3"
             step="0.1"
-            .value=${this.sustain.toString()}
-            @input="${(e: InputEvent) =>
-              (this.sustain = (e.target as HTMLInputElement).valueAsNumber)}"
-          />
-          ${this.sustain}
+            @change="${this.onChange}"
+          >
+          </p-slider>
         </p-field>
 
         <p-field>
-          <label for="release">release</label>
-          <input
-            id="release"
-            type="range"
+          <p-slider
+            id="envelope-release"
+            name="release"
+            .value="${this.value.release}"
             min="0"
-            max="1"
+            max="3"
             step="0.1"
-            .value=${this.release.toString()}
-            @input="${(e: InputEvent) =>
-              (this.release = (e.target as HTMLInputElement).valueAsNumber)}"
-          />
-          ${this.release}
+            @change="${this.onChange}"
+          >
+          </p-slider>
         </p-field>
 
-        ${this.duration}s
+        ${this.value.duration}s
       </div>
     `;
+  }
+
+  onChange(e: InputEvent) {
+    const slider = e.target as SliderElement;
+    const { name, value } = slider;
+
+    this.value = {
+      ...this.value,
+      [name]: value,
+    };
+
+    this.value.duration = Number(
+      (
+        this.value.attack +
+        this.value.decay +
+        this.value.sustain +
+        this.value.release
+      ).toFixed(1),
+    );
   }
 }
 

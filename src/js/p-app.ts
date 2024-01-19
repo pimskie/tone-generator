@@ -2,8 +2,13 @@ import { LitElement, TemplateResult, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { Ref, createRef, ref } from 'lit/directives/ref.js';
 
-import '@/components/p-field';
+import '@/components/form/p-field';
 import '@/components/p-envelope';
+import '@/components/form/p-slider';
+
+import '@/components/p-biquad-filter';
+import { BiquadFilterElement } from '@/components/p-biquad-filter';
+
 import { EnvelopeElement } from '@/components/p-envelope';
 
 import { playTone } from '@/audio-utils/play-tone';
@@ -17,28 +22,41 @@ export class App extends LitElement {
   @property({ type: String })
   lfoFrequency = '2';
 
-  @property({ type: String })
-  lowpassFrequency = '800';
-
-  @property({ type: String })
-  lowpassQ = '10';
-
-  @property({ type: String })
-  lowpassDetune = '0';
-
   envelopeRef: Ref<EnvelopeElement> = createRef();
+  biquadFilterRef: Ref<BiquadFilterElement> = createRef();
+
+  onNodeChanged() {
+    this.play();
+  }
+
+  play() {
+    const envelopeEl = this.envelopeRef.value!;
+    const biquadFilterEl = this.biquadFilterRef.value!;
+
+    const { value: envelopeValues } = envelopeEl;
+    const { value: biquadFilterValues } = biquadFilterEl;
+
+    playTone(
+      {
+        lfoFrequency: Number(this.lfoFrequency),
+        toneFrequency: Number(this.toneFrequency),
+      },
+      biquadFilterValues,
+      envelopeValues,
+    );
+  }
 
   protected render(): TemplateResult {
     return html`
       <div class="app">
         <div class="controls">
-          <p-envelope
-            ${ref(this.envelopeRef)}
-            attack="0.1"
-            decay="0.1"
-            sustain="0.1"
-            release="0.2"
+          <p-biquad-filter
+            ${ref(this.biquadFilterRef)}
+            @change="${this.onNodeChanged}"
           >
+          </p-biquad-filter>
+
+          <p-envelope ${ref(this.envelopeRef)} @change="${this.onNodeChanged}">
           </p-envelope>
 
           <p-field>
@@ -70,53 +88,6 @@ export class App extends LitElement {
               @change="${this.play}"
             />
           </p-field>
-
-          <p-field>
-            <label for="lowpass-frequency">Lowpass Frequency</label>
-            <input
-              id="lowpass-frequency"
-              type="range"
-              min="100"
-              max="1000"
-              step="1"
-              .value="${this.lowpassFrequency}"
-              @input="${(e: InputEvent) =>
-                (this.lowpassFrequency = (e.target as HTMLInputElement).value)}"
-              @change="${this.play}"
-            />
-          </p-field>
-
-          <p-field>
-            <label for="lowpass-q">Lowpass Q</label>
-            <input
-              id="lowpass-q"
-              type="range"
-              min="1"
-              max="20"
-              step="0.5"
-              .value="${this.lowpassQ}"
-              @input="${(e: InputEvent) =>
-                (this.lowpassQ = (e.target as HTMLInputElement).value)}"
-              @change="${this.play}"
-            />
-            ${this.lowpassQ}
-          </p-field>
-
-          <p-field>
-            <label for="lowpass-detune">Lowpass Detune</label>
-            <input
-              id="lowpass-detune"
-              type="range"
-              min="1"
-              max="1000"
-              step="1"
-              .value="${this.lowpassDetune}"
-              @input="${(e: InputEvent) =>
-                (this.lowpassDetune = (e.target as HTMLInputElement).value)}"
-              @change="${this.play}"
-            />
-            ${this.lowpassDetune}
-          </p-field>
         </div>
 
         <div class="main">
@@ -124,28 +95,6 @@ export class App extends LitElement {
         </div>
       </div>
     `;
-  }
-
-  play() {
-    const { attack, sustain, decay, release, duration } =
-      this.envelopeRef.value!;
-
-    playTone(
-      {
-        lfoFrequency: Number(this.lfoFrequency),
-        toneFrequency: Number(this.toneFrequency),
-        lowpassFrequency: Number(this.lowpassFrequency),
-        lowpassQ: Number(this.lowpassQ),
-        lowpassDetune: Number(this.lowpassDetune),
-      },
-      {
-        attack,
-        decay,
-        sustain,
-        release,
-        duration,
-      },
-    );
   }
 
   static styles = css`

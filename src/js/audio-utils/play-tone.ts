@@ -1,15 +1,18 @@
 import { context } from '@/audio-utils/context.ts';
 import { Envelope } from '@/components/p-envelope';
 
+import { BiquadFilter } from '@/components/p-biquad-filter';
+
 type ToneConfig = {
   toneFrequency: number;
   lfoFrequency: number;
-  lowpassFrequency: number;
-  lowpassQ: number;
-  lowpassDetune: number;
 };
 
-const playTone = (config: ToneConfig, envelope: Envelope) => {
+const playTone = (
+  config: ToneConfig,
+  biquadFilterConfig: BiquadFilter,
+  envelope: Envelope,
+) => {
   const { currentTime } = context;
 
   // Create an oscillator
@@ -21,9 +24,7 @@ const playTone = (config: ToneConfig, envelope: Envelope) => {
   // Create a low-pass filter
   const lowPass = new BiquadFilterNode(context, {
     type: 'lowpass',
-    frequency: config.lowpassFrequency,
-    Q: config.lowpassQ,
-    detune: config.lowpassDetune,
+    ...biquadFilterConfig,
   });
 
   // Create an LFO (Low-Frequency Oscillator) for modulation
