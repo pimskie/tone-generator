@@ -2,6 +2,8 @@ import { LitElement, TemplateResult, css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { Ref, createRef, ref } from 'lit/directives/ref.js';
 
+import '@/components/pad/p-pad';
+
 import '@/components/p-envelope';
 import '@/components/p-card';
 import '@/components/form/p-field';
@@ -12,37 +14,13 @@ import { BiquadFilterElement } from '@/components/p-biquad-filter';
 import { EnvelopeElement } from '@/components/p-envelope';
 import { playTone } from '@/audio-utils/play-tone';
 
-const notes: { [key: string]: number } = {
-  C3: 130.81,
-  'C#3': 138.59,
-  D3: 146.83,
-  'D#3': 155.56,
-  E3: 164.81,
-  F3: 174.61,
-  'F#3': 185.0,
-  G3: 196.0,
-  'G#3': 207.65,
-  A3: 220.0,
-  'A#3': 233.08,
-  B3: 246.94,
-  C4: 261.63,
-  'C#4': 277.18,
-  D4: 293.66,
-  'D#4': 311.13,
-  E4: 329.63,
-  F4: 349.23,
-  'F#4': 369.99,
-  G4: 392.0,
-  'G#4': 415.3,
-  A4: 440.0,
-  'A#4': 466.16,
-  B4: 493.88,
-};
+import { notes } from '@/config/notes';
+
 // The @customElement decorator is shorthand for calling customElements.define
 @customElement('p-app')
 export class App extends LitElement {
   @state()
-  toneFrequency = notes.D4;
+  toneFrequency = notes.C3;
 
   @property({ type: String })
   lfoFrequency = '2';
@@ -128,6 +106,7 @@ export class App extends LitElement {
         </div>
 
         <div class="main">
+          <p-pad></p-pad>
           <button class="generate" @click="${this.play}">Test</button>
         </div>
       </div>
