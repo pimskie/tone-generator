@@ -14,7 +14,7 @@ export class SliderElement extends LitElement {
   step: number = 0.1;
 
   @property({ type: Number })
-  value: number = 0;
+  value?: number = 0;
 
   @property({ type: String })
   id = '';
@@ -24,20 +24,22 @@ export class SliderElement extends LitElement {
 
   protected render(): TemplateResult {
     return html`
-      <label for="${this.id}">${this.name}</label>
-      <input
-        type="range"
-        id="${this.id}"
-        name="${this.name}"
-        min="${this.min}"
-        max="${this.max}"
-        step="${this.step}"
-        value="${this.value}"
-        @input="${(e: InputEvent) =>
-          (this.value = (e.target as HTMLInputElement).valueAsNumber)}"
-        @change=${this.onChange}
-      />
-      ${this.value}
+      <div class="slider">
+        <label for="${this.id}">${this.name}</label>
+        <input
+          type="range"
+          id="${this.id}"
+          name="${this.name}"
+          min="${this.min}"
+          max="${this.max}"
+          step="${this.step}"
+          value="${this.value || 0}"
+          @input="${(e: InputEvent) =>
+            (this.value = (e.target as HTMLInputElement).valueAsNumber)}"
+          @change=${this.onChange}
+        />
+        <div class="value">${this.value}</div>
+      </div>
     `;
   }
 
@@ -46,6 +48,18 @@ export class SliderElement extends LitElement {
 
     this.dispatchEvent(event);
   }
+
+  static styles = css`
+    .slider {
+      display: grid;
+      grid-template-columns: 2fr 3fr 1fr;
+      gap: var(--size-2);
+    }
+
+    .value {
+      text-align: right;
+    }
+  `;
 }
 
 declare global {

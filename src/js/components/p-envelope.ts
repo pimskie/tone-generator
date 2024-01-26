@@ -1,5 +1,5 @@
 import { LitElement, html } from 'lit';
-import { customElement, state } from 'lit/decorators.js';
+import { customElement, property } from 'lit/decorators.js';
 
 import { SliderElement } from '@/components/form/p-slider';
 
@@ -8,20 +8,18 @@ type Envelope = {
   decay: number;
   sustain: number;
   release: number;
-  duration: number;
 };
 
 export type { Envelope };
 
 @customElement('p-envelope')
 export class EnvelopeElement extends LitElement {
-  @state()
+  @property({ type: Object })
   value: Envelope = {
-    attack: 0.1,
-    decay: 0.1,
+    attack: 0.0,
+    decay: 0.0,
     sustain: 0.1,
     release: 0.2,
-    duration: 0.5,
   };
 
   render() {
@@ -78,8 +76,6 @@ export class EnvelopeElement extends LitElement {
           >
           </p-slider>
         </p-field>
-
-        ${this.value.duration}s
       </div>
     `;
   }
@@ -92,15 +88,6 @@ export class EnvelopeElement extends LitElement {
       ...this.value,
       [name]: value,
     };
-
-    this.value.duration = Number(
-      (
-        this.value.attack +
-        this.value.decay +
-        this.value.sustain +
-        this.value.release
-      ).toFixed(1),
-    );
   }
 }
 

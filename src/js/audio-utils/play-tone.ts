@@ -1,6 +1,7 @@
 import { context } from '@/audio-utils/context.ts';
-import { Envelope } from '@/components/p-envelope';
+import { createNoise } from '@/audio-utils/create-noise';
 
+import { Envelope } from '@/components/p-envelope';
 import { BiquadFilter } from '@/components/p-biquad-filter';
 
 type ToneConfig = {
@@ -18,7 +19,7 @@ const playTone = (
   // Create an oscillator
   const oscillator = new OscillatorNode(context, {
     frequency: config.toneFrequency,
-    type: 'square',
+    type: 'sawtooth',
   });
 
   // Create a low-pass filter
@@ -35,7 +36,12 @@ const playTone = (
 
   const lfoGain = new GainNode(context, { gain: 150 });
 
+  // create noise
+  const noise: AudioBufferSourceNode = createNoise();
+
+  // create envelope
   const { attack, decay, sustain, release } = envelope;
+  const envelopeTime = attack + decay + sustain + release;
 
   const envelopeGain = context.createGain();
   envelopeGain.gain.setValueAtTime(0, currentTime);
@@ -51,6 +57,7 @@ const playTone = (
   );
 
   oscillator.connect(lowPass);
+  // noise.connect(lowPass);
   lowPass.connect(envelopeGain);
   envelopeGain.connect(context.destination);
 
@@ -61,10 +68,14 @@ const playTone = (
   // Start the LFO and oscillator
   lfo.start();
   oscillator.start();
+  noise.start();
 
-  // Stop the LFO and oscillator after a duration (adjust as needed)
-  lfo.stop(currentTime + envelope.duration);
-  oscillator.stop(currentTime + envelope.duration);
+  // Stop the nodes after a duration
+  const endTime = currentTime + envelopeTime;
+
+  lfo.stop(endTime);
+  oscillator.stop(endTime);
+  noise.stop(endTime);
 };
 
 export { playTone };

@@ -3,7 +3,7 @@ import { LitElement, html } from 'lit';
 import '@/components/form/p-field';
 import '@/components/form/p-slider';
 import { SliderElement } from '@/components/form/p-slider';
-import { customElement, state } from 'lit/decorators.js';
+import { customElement, property } from 'lit/decorators.js';
 
 type BiquadFilter = {
   frequency: number;
@@ -15,9 +15,9 @@ export { type BiquadFilter };
 
 @customElement('p-biquad-filter')
 export class BiquadFilterElement extends LitElement {
-  @state()
+  @property({ type: Object })
   value: BiquadFilter = {
-    frequency: 350,
+    frequency: 440,
     Q: 1,
     detune: 0,
   };
@@ -31,6 +31,7 @@ export class BiquadFilterElement extends LitElement {
           .value="${this.value.frequency}"
           min="50"
           max="1000"
+          step="1"
           @change="${this.onChange}"
         >
         </p-slider>

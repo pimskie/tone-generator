@@ -1,18 +1,10 @@
+@import 'open-props/borders';
+@import 'open-props/colors';
+@import 'open-props/sizes';
+@import 'open-props/shadows';
+
 :root {
   --gutter: 2rem;
-
-  --size-000: -0.5rem;
-  --size-00: -0.25rem;
-  --size-1: 0.25rem;
-  --size-2: 0.5rem;
-  --size-3: 1rem;
-  --size-4: 1.25rem;
-  --size-5: 1.5rem;
-  --size-6: 1.75rem;
-  --size-7: 2rem;
-  --size-8: 3rem;
-  --size-9: 4rem;
-  --size-10: 5rem;
 
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -26,6 +18,14 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  margin-block-end: 0;
+  color: red;
 }
 
 a {
