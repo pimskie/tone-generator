@@ -5,7 +5,7 @@ import { notes as _notes } from '@/config/notes';
 import '@/components/pad/p-step';
 
 @customElement('p-pad')
-export class Pad extends LitElement {
+export class PadElement extends LitElement {
   @state()
   protected steps = 16;
 
@@ -28,6 +28,10 @@ export class Pad extends LitElement {
     );
   }
 
+  getAt() {
+    return [1, 2, 3];
+  }
+
   render() {
     const stepsList = new Array(this.steps)
       .fill(this.steps)
@@ -39,18 +43,20 @@ export class Pad extends LitElement {
       <div class="pad">
         ${this.isPointerDown}
         ${notesList.map(
-          (note) => html`
-            <div class="note" data-note="${note}">
-              <div class="note__label">${note}</div>
+          (tone) => html`
+            <div class="note" data-tone="${tone}">
+              <div class="note__label">${tone}</div>
               ${stepsList.map(
                 (step) => html`
                   <p-step
                     class="step"
                     checked
                     step="${step}"
+                    .tone="${tone}"
                     .isPointerDown="${this.isPointerDown}"
-                    >${step}</p-step
                   >
+                    ${step}
+                  </p-step>
                 `,
               )}
             </div>
@@ -77,6 +83,6 @@ export class Pad extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'p-pad': Pad;
+    'p-pad': PadElement;
   }
 }

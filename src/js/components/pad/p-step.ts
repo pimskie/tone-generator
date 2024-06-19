@@ -32,7 +32,6 @@ export class Step extends LitElement {
       <input
         type="checkbox"
         .checked="${this.checked}"
-        @click="${(e: InputEvent) => e.preventDefault()}"
         @pointerdown="${(e: InputEvent) => this.toggleChecked}"
         @pointerenter="${this.onPointerEnter}"
         @change="${(e: InputEvent) =>

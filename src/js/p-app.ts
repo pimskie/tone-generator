@@ -12,6 +12,7 @@ import '@/components/form/p-slider';
 import '@/components/p-biquad-filter';
 import { BiquadFilterElement } from '@/components/p-biquad-filter';
 import { EnvelopeElement } from '@/components/p-envelope';
+import { PadElement } from '@/components/pad/p-pad';
 import { playTone } from '@/audio-utils/play-tone';
 
 import { notes } from '@/config/notes';
@@ -28,6 +29,7 @@ export class App extends LitElement {
   frequencyRef: Ref<HTMLSelectElement> = createRef();
   envelopeRef: Ref<EnvelopeElement> = createRef();
   biquadFilterRef: Ref<BiquadFilterElement> = createRef();
+  padRef: Ref<PadElement> = createRef();
 
   onNodeChanged() {
     this.play();
@@ -50,6 +52,8 @@ export class App extends LitElement {
       biquadFilterValues,
       envelopeValues,
     );
+
+    console.log(this.padRef.value!.getAt());
   }
 
   protected render(): TemplateResult {
@@ -106,7 +110,8 @@ export class App extends LitElement {
         </div>
 
         <div class="main">
-          <p-pad></p-pad>
+          <p-pad ${ref(this.padRef)}> </p-pad>
+
           <button class="generate" @click="${this.play}">Test</button>
         </div>
       </div>
